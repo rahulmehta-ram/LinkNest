@@ -1,0 +1,17 @@
+{
+  "name": "link-profile-mvp",
+  "version": "0.1.0",
+  "description": "Shareable, customizable link profile platform - MVP version",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "keywords": ["links", "profile", "share"],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "express": "^4.18.2",
+    "sqlite3": "^5.1.6",
+    "nanoid": "^4.0.0"
+  }
+}

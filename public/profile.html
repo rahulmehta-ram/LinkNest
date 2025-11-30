@@ -1,0 +1,1012 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - LinkNest</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            transition: background-color 0.3s;
+        }
+
+        body.dark-theme {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+        }
+
+        body.light-theme {
+            background: linear-gradient(135deg, #ffffff 0%, #f5f5f5 100%);
+            color: #333;
+        }
+
+        /* If user supplied a solid background color, apply it to the profile container.
+           We set --profile-bg from JS and toggle data-has-custom-bg on the body. */
+        body[data-has-custom-bg="true"] .profile-container {
+            background: var(--profile-bg) !important;
+        }
+
+        /* ===== MINIMAL TEMPLATE ===== */
+        body.template-minimal {
+            font-family: 'Courier Prime', monospace;
+        }
+
+        .template-minimal .profile-container {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            max-width: 500px;
+            backdrop-filter: blur(10px);
+        }
+
+        body.light-theme.template-minimal .profile-container {
+            background: rgba(255, 255, 255, 0.7);
+            border: 1px solid #ddd;
+        }
+
+        .template-minimal .profile-name {
+            font-size: 24px;
+            font-weight: 700;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .template-minimal .link-card {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px dashed rgba(255, 255, 255, 0.2);
+            padding: 12px 16px;
+            font-size: 13px;
+            letter-spacing: 1px;
+        }
+
+        body.light-theme.template-minimal .link-card {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px dashed #ccc;
+        }
+
+        /* ===== PORTFOLIO TEMPLATE ===== */
+        .template-portfolio .profile-container {
+            background: rgba(255, 255, 255, 0.08);
+            border-radius: 24px;
+            max-width: 620px;
+            backdrop-filter: blur(20px);
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.4);
+        }
+
+        body.light-theme.template-portfolio .profile-container {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .template-portfolio .avatar {
+            width: 140px;
+            height: 140px;
+            border: 6px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-theme.template-portfolio .avatar {
+            border-color: #ddd;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .template-portfolio .profile-name {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            margin-bottom: 6px;
+        }
+
+        .template-portfolio .profile-bio {
+            font-size: 15px;
+            opacity: 0.85;
+            margin-bottom: 32px;
+        }
+
+        .template-portfolio .links-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+        }
+
+        .template-portfolio .link-card {
+            padding: 24px;
+            border-radius: 16px;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body.light-theme.template-portfolio .link-card {
+            background: rgba(255, 255, 255, 0.7);
+            border-color: #e0e0e0;
+        }
+
+        .template-portfolio .link-card:hover {
+            transform: translateY(-8px);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.2);
+        }
+
+        body.light-theme.template-portfolio .link-card:hover {
+            background: rgba(255, 255, 255, 0.95);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+        }
+
+        .template-portfolio .link-icon {
+            font-size: 40px !important;
+            margin-bottom: 12px;
+        }
+
+        .template-portfolio .link-card-title {
+            font-size: 15px !important;
+            font-weight: 700;
+        }
+
+        .template-portfolio .link-card-url {
+            display: none;
+        }
+
+        /* ===== CREATOR TEMPLATE ===== */
+        .template-creator .profile-container {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 193, 7, 0.1) 100%);
+            border-radius: 20px;
+            max-width: 550px;
+            backdrop-filter: blur(15px);
+            border: 2px solid rgba(255, 107, 107, 0.2);
+        }
+
+        body.light-theme.template-creator .profile-container {
+            background: linear-gradient(135deg, #fff5f5 0%, #fffef0 100%);
+            border-color: rgba(255, 107, 107, 0.1);
+        }
+
+        .template-creator .avatar {
+            width: 130px;
+            height: 130px;
+            border: 5px solid rgba(255, 107, 107, 0.4);
+            box-shadow: 0 0 40px rgba(255, 107, 107, 0.3), inset 0 0 40px rgba(255, 107, 107, 0.1);
+        }
+
+        .template-creator .profile-name {
+            font-size: 28px;
+            font-weight: 900;
+            background: linear-gradient(135deg, #ff6b6b, #ffc107);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+
+        .template-creator .profile-bio {
+            font-size: 14px;
+            margin-bottom: 28px;
+            color: inherit;
+            opacity: 0.9;
+        }
+
+        .template-creator .links-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 14px;
+        }
+
+        .template-creator .link-card {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.1) 0%, rgba(255, 193, 7, 0.05) 100%);
+            border: 2px solid rgba(255, 107, 107, 0.3);
+            padding: 18px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s;
+        }
+
+        body.light-theme.template-creator .link-card {
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.05) 0%, rgba(255, 193, 7, 0.03) 100%);
+            border-color: rgba(255, 107, 107, 0.2);
+        }
+
+        .template-creator .link-card:hover {
+            transform: translateX(8px);
+            background: linear-gradient(135deg, rgba(255, 107, 107, 0.2) 0%, rgba(255, 193, 7, 0.1) 100%);
+            border-color: rgba(255, 107, 107, 0.5);
+        }
+
+        .template-creator .link-icon {
+            font-size: 28px !important;
+            width: auto;
+            height: auto;
+            background: linear-gradient(135deg, #ff6b6b, #ffc107) !important;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .template-creator .link-card-content {
+            flex: 1;
+        }
+
+        .template-creator .link-card-title {
+            font-size: 15px !important;
+            font-weight: 700 !important;
+            color: inherit;
+        }
+
+        /* ===== BUSINESS TEMPLATE ===== */
+        .template-business .profile-container {
+            background: rgba(255, 255, 255, 0.04);
+            border-radius: 0;
+            max-width: 600px;
+            backdrop-filter: blur(10px);
+            border-left: 4px solid rgba(255, 255, 255, 0.3);
+            box-shadow: -10px 0 40px rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-theme.template-business .profile-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-left-color: #333;
+            box-shadow: -5px 0 20px rgba(0, 0, 0, 0.05);
+        }
+
+        .template-business .avatar {
+            width: 110px;
+            height: 110px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 8px;
+        }
+
+        body.light-theme.template-business .avatar {
+            border-color: #ccc;
+        }
+
+        .template-business .profile-name {
+            font-size: 26px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-size: 20px;
+            font-weight: 900;
+            letter-spacing: 2px;
+            margin-bottom: 4px;
+        }
+
+        .template-business .profile-bio {
+            font-size: 13px;
+            opacity: 0.7;
+            margin-bottom: 28px;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            font-weight: 600;
+        }
+
+        .template-business .links-list {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0;
+            border-top: 2px solid rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-theme.template-business .links-list {
+            border-top-color: #e0e0e0;
+        }
+
+        .template-business .link-card {
+            background: transparent;
+            border: none;
+            border-bottom: 2px solid rgba(255, 255, 255, 0.1);
+            padding: 16px 0;
+            border-radius: 0;
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            text-decoration: none;
+            color: inherit;
+            transition: all 0.3s;
+        }
+
+        body.light-theme.template-business .link-card {
+            border-bottom-color: #e0e0e0;
+        }
+
+        .template-business .link-card:last-child {
+            border-bottom: none;
+        }
+
+        .template-business .link-card:hover {
+            background: rgba(255, 255, 255, 0.05);
+            padding-left: 8px;
+        }
+
+        body.light-theme.template-business .link-card:hover {
+            background: rgba(0, 0, 0, 0.02);
+        }
+
+        .template-business .link-card-title {
+            font-size: 13px !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.5px;
+        }
+
+        .template-business .link-card-url {
+            font-size: 11px !important;
+            opacity: 0.5 !important;
+        }
+
+        /* ===== SHARED STYLES ===== */
+        .profile-container {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px 30px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+
+        body.light-theme .profile-container {
+            background: rgba(255, 255, 255, 0.8);
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.1);
+        }
+
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 24px;
+            object-fit: cover;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        body.light-theme .avatar {
+            border-color: #ddd;
+            background: #f0f0f0;
+        }
+
+        .profile-name {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .profile-bio {
+            font-size: 14px;
+            opacity: 0.8;
+            margin-bottom: 30px;
+            line-height: 1.6;
+            white-space: pre-line;
+        }
+
+        .links-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 30px;
+        }
+
+        .link-card {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 16px;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s;
+            color: inherit;
+            cursor: pointer;
+        }
+
+        body.light-theme .link-card {
+            background: rgba(255, 255, 255, 0.6);
+            border-color: #ddd;
+        }
+
+        .link-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            background: rgba(255, 255, 255, 0.15);
+        }
+
+        body.light-theme .link-card:hover {
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .link-icon {
+            font-size: 24px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            flex-shrink: 0;
+        }
+
+        .link-card-content {
+            text-align: left;
+            flex: 1;
+        }
+
+        .link-card-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 4px;
+        }
+
+        .link-card-url {
+            font-size: 12px;
+            opacity: 0.6;
+        }
+
+        .link-arrow {
+            opacity: 0.5;
+            transition: transform 0.3s;
+            font-size: 14px;
+        }
+
+        .link-card:hover .link-arrow {
+            transform: translateX(4px);
+        }
+
+        .empty-state {
+            padding: 40px 20px;
+            opacity: 0.6;
+            font-size: 14px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-copy {
+            background: rgba(255, 255, 255, 0.2);
+            color: inherit;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .btn-copy:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        body.light-theme .btn-copy {
+            background: #e0e0e0;
+            border-color: #ccc;
+            color: #333;
+        }
+
+        body.light-theme .btn-copy:hover {
+            background: #d0d0d0;
+        }
+
+        .btn-create {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .btn-create:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .footer {
+            font-size: 12px;
+            opacity: 0.5;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        body.light-theme .footer {
+            border-top-color: #ddd;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+            opacity: 0.7;
+        }
+
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        body.light-theme .loading-spinner {
+            border-color: rgba(0, 0, 0, 0.1);
+            border-top-color: #333;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 600px) {
+            .profile-container {
+                padding: 30px 20px;
+            }
+
+            .profile-name {
+                font-size: 24px;
+            }
+
+            .avatar {
+                width: 100px;
+                height: 100px;
+            }
+
+            .link-card {
+                padding: 14px;
+            }
+
+            .action-buttons {
+                flex-direction: column;
+            }
+
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .template-portfolio .links-list {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #4caf50;
+            color: white;
+            padding: 16px 24px;
+            border-radius: 8px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease-out;
+            z-index: 1000;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        /* Customization variables */
+        :root {
+            --custom-spacing: 16px;
+            --custom-text-color: #ffffff;
+            --custom-font: 'Inter', sans-serif;
+            --custom-button-shape: 12px;
+        }
+
+        /* Layout: Grid */
+        body.layout-grid .links-list {
+            display: grid !important;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)) !important;
+            gap: var(--custom-spacing) !important;
+        }
+
+        /* Layout: Card */
+        body.layout-card .links-list {
+            display: grid !important;
+            grid-template-columns: 1fr !important;
+            gap: var(--custom-spacing) !important;
+        }
+
+        /* Button shapes */
+        body.button-shape-square .link-card {
+            border-radius: 4px !important;
+        }
+
+        body.button-shape-pill .link-card {
+            border-radius: 50px !important;
+        }
+
+        /* Font families */
+        body.font-serif {
+            font-family: 'Georgia', serif !important;
+        }
+
+        body.font-monospace {
+            font-family: 'Courier Prime', monospace !important;
+        }
+
+        body.font-cursive {
+            font-family: 'Playfair Display', serif !important;
+        }
+
+        /* Text color override */
+        body[data-custom-text-color] {
+            color: var(--custom-text-color) !important;
+        }
+
+        /* Hover animations toggle */
+        body.no-hover-animation .link-card:hover {
+            transform: none !important;
+        }
+
+        /* QR Code and Analytics badges */
+        .qr-code-container {
+            margin-top: 30px;
+            text-align: center;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .analytics-badge {
+            margin-top: 20px;
+            padding: 12px 16px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 8px;
+            text-align: center;
+            font-size: 13px;
+            opacity: 0.8;
+        }
+
+        /* Media embeds */
+        .video-embed,
+        .audio-embed {
+            margin-top: 20px;
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .video-embed iframe,
+        .audio-embed iframe {
+            width: 100%;
+            border: none;
+        }
+
+        /* Optional sections */
+        .projects-section,
+        .donate-section,
+        .social-badges-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+    </style>
+</head>
+<body class="dark-theme template-minimal">
+    <div class="profile-container" id="profileContainer">
+        <div class="loading">
+            <div class="loading-spinner"></div>
+            <p>Loading profile...</p>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        // Support both /p/:id and /@:slug
+        const path = window.location.pathname || '/';
+        let profileId = null;
+        let profileSlug = null;
+        if (path.startsWith('/p/')) {
+            profileId = path.split('/p/')[1];
+        } else if (path.startsWith('/@')) {
+            profileSlug = path.split('/@')[1];
+        }
+
+        // Enhanced social media icon mapping with comprehensive support
+        const iconMap = {
+            'website': 'fa-globe',
+            'instagram': 'fa-instagram',
+            'youtube': 'fa-youtube',
+            'github': 'fa-github',
+            'twitter': 'fa-twitter',
+            'linkedin': 'fa-linkedin',
+            'facebook': 'fa-facebook',
+            'tiktok': 'fa-tiktok',
+            'email': 'fa-envelope',
+            'whatsapp': 'fa-whatsapp',
+            'telegram': 'fa-telegram',
+            'discord': 'fa-discord',
+            'twitch': 'fa-twitch',
+            'snapchat': 'fa-snapchat',
+            'pinterest': 'fa-pinterest',
+            'medium': 'fa-medium',
+            'dribbble': 'fa-dribbble',
+            'behance': 'fa-behance',
+            'spotify': 'fa-spotify',
+            'soundcloud': 'fa-soundcloud',
+            'reddit': 'fa-reddit',
+            'quora': 'fa-quora',
+            'stackoverflow': 'fa-stack-overflow',
+            'codepen': 'fa-codepen',
+            'kaggle': 'fa-kaggle',
+            'patreon': 'fa-patreon',
+            'paypal': 'fa-paypal',
+            'amazon': 'fa-amazon',
+            'ebay': 'fa-ebay',
+            'etsy': 'fa-etsy',
+            'shopify': 'fa-shopify',
+            'stripe': 'fa-stripe',
+            'skype': 'fa-skype',
+            'viber': 'fa-viber',
+            'slack': 'fa-slack',
+            'mastodon': 'fa-mastodon',
+            'other': 'fa-link'
+        };
+
+        function getIconClass(type) {
+            return iconMap[type] || 'fa-link';
+        }
+
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        async function loadProfile() {
+            try {
+                let response;
+                if (profileSlug) {
+                    response = await fetch(`/api/profile/slug/${profileSlug}`);
+                } else {
+                    response = await fetch(`/api/profile/${profileId}`);
+                }
+                if (!response.ok) throw new Error('Profile not found');
+
+                const data = await response.json();
+                if (!data.success) throw new Error(data.error);
+
+                renderProfile(data);
+            } catch (err) {
+                console.error(err);
+                document.getElementById('profileContainer').innerHTML = `
+                    <div class="empty-state">
+                        <p>❌ Profile not found or has been deleted</p>
+                        <p style="margin-top: 20px;">
+                            <a href="/" class="btn btn-create">← Create Your Profile</a>
+                        </p>
+                    </div>
+                `;
+            }
+        }
+
+        function renderProfile(profile) {
+            // Set theme FIRST
+            const theme = profile.theme === 'light' ? 'light-theme' : 'dark-theme';
+            const templateClass = `template-${profile.template || 'minimal'}`;
+            const customization = profile.customization || {};
+            
+            // Build class list with customizations
+            let classesArray = [theme, templateClass];
+            
+            // Add layout class
+            if (customization.layout) {
+                classesArray.push(`layout-${customization.layout}`);
+            }
+            
+            // Add button shape class
+            if (customization.buttonShape && customization.buttonShape !== 'rounded') {
+                classesArray.push(`button-shape-${customization.buttonShape}`);
+            }
+            
+            // Add font class
+            if (customization.fontFamily && customization.fontFamily !== 'sans-serif') {
+                classesArray.push(`font-${customization.fontFamily === 'monospace' ? 'monospace' : customization.fontFamily === 'serif' ? 'serif' : 'cursive'}`);
+            }
+            
+            // Add hover animation class
+            if (customization.enableHoverAnimation === false) {
+                classesArray.push('no-hover-animation');
+            }
+            
+            document.body.className = classesArray.join(' ');
+            
+            // Debug: log applied theme info to help diagnose issues
+            try {
+                console.log('renderProfile:', { storedTheme: profile.theme, appliedTheme: theme, template: templateClass, customization, bgColor: profile.bgColor });
+                document.body.setAttribute('data-applied-theme', theme);
+            } catch (e) { /* ignore */ }
+
+            // Apply custom background color as a CSS variable only —
+            // do NOT overwrite body background so theme gradients remain.
+            if (profile.bgColor) {
+                document.documentElement.style.setProperty('--profile-bg', profile.bgColor);
+                document.body.setAttribute('data-has-custom-bg', 'true');
+            } else {
+                document.documentElement.style.removeProperty('--profile-bg');
+                document.body.removeAttribute('data-has-custom-bg');
+            }
+
+            // Apply custom spacing
+            if (customization.spacing) {
+                document.documentElement.style.setProperty('--custom-spacing', `${customization.spacing}px`);
+            }
+
+            // Apply custom text color
+            if (customization.textColor) {
+                document.documentElement.style.setProperty('--custom-text-color', customization.textColor);
+                document.body.setAttribute('data-custom-text-color', 'true');
+            }
+
+            // Apply custom font
+            if (customization.fontFamily) {
+                const fontMap = {
+                    'sans-serif': "'Inter', sans-serif",
+                    'serif': "'Georgia', serif",
+                    'monospace': "'Courier Prime', monospace",
+                    'cursive': "'Playfair Display', serif"
+                };
+                document.documentElement.style.setProperty('--custom-font', fontMap[customization.fontFamily]);
+            }
+
+            const container = document.getElementById('profileContainer');
+            
+            const avatarSrc = profile.photo || `https://ui-avatars.com/api/?name=${encodeURIComponent(profile.name)}&background=random`;
+
+            let linksHTML = '';
+            if (profile.links && profile.links.length > 0) {
+                linksHTML = profile.links.map((link, idx) => `
+                    <a href="/r/${profile.id}/${idx}" target="_blank" rel="noopener noreferrer" class="link-card" style="--button-color: ${profile.buttonColor};">
+                        <div class="link-icon" style="background: ${profile.buttonColor}20; color: ${profile.buttonColor};">
+                            <i class="fas ${getIconClass(link.type)}"></i>
+                        </div>
+                        <div class="link-card-content">
+                            <div class="link-card-title">${link.title}</div>
+                            <div class="link-card-url">${link.url.replace(/^https?:\/\//, '')}</div>
+                        </div>
+                        <div class="link-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                    </a>
+                `).join('');
+            } else {
+                linksHTML = '<div class="empty-state">No links added yet</div>';
+            }
+
+            // Build optional sections
+            let optionalHTML = '';
+            
+            // Video/GIF embed
+            if (customization.videoUrl) {
+                optionalHTML += `<div class="video-embed"><iframe src="${getEmbedUrl(customization.videoUrl)}" frameborder="0" allowfullscreen style="height: 300px;"></iframe></div>`;
+            }
+            
+            // Audio embed
+            if (customization.audioUrl) {
+                optionalHTML += `<div class="audio-embed"><iframe src="${getEmbedUrl(customization.audioUrl)}" frameborder="0" height="102"></iframe></div>`;
+            }
+            
+            // Analytics badge
+            if (customization.showAnalytics) {
+                optionalHTML += `<div class="analytics-badge">👁️ ${profile.views} views</div>`;
+            }
+            
+            // QR Code
+            if (customization.showQRCode) {
+                const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(window.location.href)}`;
+                optionalHTML += `<div class="qr-code-container"><img src="${qrCodeUrl}" alt="QR Code" style="max-width: 150px;"></div>`;
+            }
+
+            container.innerHTML = `
+                <img src="${avatarSrc}" alt="${profile.name}" class="avatar" onerror="this.src='https://via.placeholder.com/120'">
+                <h1 class="profile-name">${profile.name}</h1>
+                ${profile.bio ? `<p class="profile-bio">${profile.bio}</p>` : ''}
+                
+                <div class="action-buttons">
+                    <button class="btn btn-copy" onclick="copyProfileLink()">
+                        <i class="fas fa-copy"></i> Copy Link
+                    </button>
+                    <a href="/" class="btn btn-create">
+                        <i class="fas fa-plus"></i> Create Yours
+                    </a>
+                </div>
+
+                <div class="links-list">
+                    ${linksHTML}
+                </div>
+
+                ${optionalHTML}
+
+                <div class="footer">
+                    <p>🔗 Powered by LinkNest</p>
+                    <p style="margin-top: 8px; opacity: 0.4;">Created on ${new Date(profile.created_at).toLocaleDateString()}</p>
+                </div>
+            `;
+        }
+
+        function getEmbedUrl(url) {
+            // Convert various URLs to embed URLs
+            if (url.includes('youtube.com') || url.includes('youtu.be')) {
+                const videoId = url.includes('youtu.be') ? url.split('/').pop() : new URL(url).searchParams.get('v');
+                return `https://www.youtube.com/embed/${videoId}`;
+            }
+            if (url.includes('vimeo.com')) {
+                const videoId = url.split('/').pop();
+                return `https://player.vimeo.com/video/${videoId}`;
+            }
+            if (url.includes('spotify.com')) {
+                return url.replace('spotify.com', 'open.spotify.com');
+            }
+            if (url.includes('soundcloud.com')) {
+                return `https://w.soundcloud.com/player/?url=${encodeURIComponent(url)}`;
+            }
+            if (url.endsWith('.gif') || url.endsWith('.mp4')) {
+                return url;
+            }
+            return url;
+        }
+
+        function copyProfileLink() {
+            const url = window.location.href;
+            navigator.clipboard.writeText(url).then(() => {
+                showToast('✓ Link copied to clipboard!');
+            }).catch(() => {
+                showToast('Failed to copy link');
+            });
+        }
+
+        loadProfile();
+    </script>
+</body>
+</html>

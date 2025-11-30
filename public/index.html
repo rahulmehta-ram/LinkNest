@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LinkNest - Create Your Profile</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Courier+Prime:wght@400;700&family=Playfair+Display:wght@700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 700px;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Template Selection Step */
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .step-number {
+            background: #667eea;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 14px;
+        }
+
+        .template-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .template-card {
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: center;
+            background: white;
+        }
+
+        .template-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.2);
+            transform: translateY(-4px);
+        }
+
+        .template-card.selected {
+            border-color: #667eea;
+            background: #f0f4ff;
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .template-preview {
+            font-size: 40px;
+            margin-bottom: 10px;
+        }
+
+        .template-name {
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 14px;
+            margin-bottom: 6px;
+        }
+
+        .template-desc {
+            font-size: 12px;
+            color: #999;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: inherit;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .form-group input:focus,
+        .form-group textarea:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .color-picker-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            background: #f8f9ff;
+            padding: 20px;
+            border-radius: 12px;
+            border: 1px solid #e8ecff;
+        }
+
+        .color-input-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .color-input-wrapper label {
+            font-weight: 600;
+            color: #333;
+            font-size: 13px;
+        }
+
+        .color-input-wrapper-flex {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .color-input-wrapper input[type="color"] {
+            width: 50px;
+            height: 44px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: border-color 0.3s;
+        }
+
+        .color-input-wrapper input[type="color"]:hover {
+            border-color: #667eea;
+        }
+
+        .color-input-wrapper input[type="text"] {
+            flex: 1;
+            padding: 10px 12px;
+            font-size: 13px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-family: 'Courier Prime', monospace;
+            transition: border-color 0.3s;
+        }
+
+        .color-input-wrapper input[type="text"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .theme-selector {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+        }
+
+        .theme-option {
+            padding: 14px 16px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            text-align: center;
+            font-weight: 600;
+            transition: all 0.3s;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .theme-option i {
+            font-size: 20px;
+        }
+
+        .theme-option:hover {
+            border-color: #667eea;
+            background: #f8f9ff;
+        }
+
+        .theme-option.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-color: #667eea;
+            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.3);
+        }
+
+        .section-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .section-title i {
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .links-container {
+            background: #f9f9f9;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .link-item {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #e0e0e0;
+        }
+
+        .link-item-content {
+            flex: 1;
+        }
+
+        .link-item-title {
+            font-weight: 600;
+            color: #1a1a1a;
+            font-size: 14px;
+        }
+
+        .link-item-url {
+            font-size: 12px;
+            color: #999;
+            margin-top: 4px;
+            word-break: break-all;
+        }
+
+        .link-item-icon {
+            margin-right: 10px;
+            color: #667eea;
+            font-size: 18px;
+        }
+
+        .link-item-delete {
+            background: #ff4757;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s;
+        }
+
+        .link-item-delete:hover {
+            background: #ff3838;
+        }
+
+        .add-link-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .add-link-form-full {
+            grid-column: 1 / -1;
+            display: grid;
+            grid-template-columns: 1fr auto;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            width: 100%;
+            margin-top: 20px;
+            font-size: 16px;
+            padding: 14px;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .btn-secondary {
+            background: white;
+            color: #667eea;
+            border: 2px solid #667eea;
+            margin-top: 15px;
+            width: 100%;
+        }
+
+        .btn-secondary:hover {
+            background: #f0f4ff;
+        }
+
+        .btn-add {
+            background: #667eea;
+            color: white;
+            padding: 10px 16px;
+        }
+
+        .btn-add:hover {
+            background: #5568d3;
+        }
+
+        .alert {
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert-error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .result-box {
+            background: #f0f4ff;
+            border: 2px solid #667eea;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+        }
+
+        .result-box.show {
+            display: block;
+        }
+
+        .result-box h3 {
+            color: #667eea;
+            margin-bottom: 12px;
+        }
+
+        .result-url {
+            background: white;
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 12px;
+            word-break: break-all;
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            border: 1px solid #667eea;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: background 0.3s;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Profile Picture Upload Styles */
+        .profile-picture-section {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .profile-picture-label {
+            display: block;
+            margin-bottom: 12px;
+            font-weight: 600;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .profile-picture-upload {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto;
+            border-radius: 50%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px dashed rgba(102, 126, 234, 0.5);
+            transition: all 0.3s;
+        }
+
+        .profile-picture-upload:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            transform: scale(1.05);
+        }
+
+        .profile-picture-upload img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+        }
+
+        .profile-picture-placeholder {
+            color: white;
+            text-align: center;
+            width: 100%;
+        }
+
+        .profile-picture-placeholder i {
+            font-size: 40px;
+            display: block;
+            margin-bottom: 8px;
+        }
+
+        .profile-picture-placeholder-text {
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .profile-picture-input {
+            display: none;
+        }
+
+        .picture-hint {
+            font-size: 12px;
+            color: #999;
+            margin-top: 10px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 20px;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .template-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .color-picker-group {
+                grid-template-columns: 1fr;
+            }
+
+            .add-link-form {
+                grid-template-columns: 1fr;
+            }
+            .add-link-form-full {
+                grid-template-columns: 1fr auto;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🔗 LinkNest</h1>
+            <p>Create your profile and share your links instantly</p>
+        </div>
+
+        <div class="alert" id="alert"></div>
+
+        <!-- Step 1: Template Selection -->
+        <div class="step active" id="step1">
+            <div class="step-title">
+                <span class="step-number">1</span>
+                Choose Your Template
+            </div>
+
+            <div class="template-grid">
+                <div class="template-card selected" data-template="minimal" onclick="selectTemplate('minimal', this)">
+                    <div class="template-preview">⚪</div>
+                    <div class="template-name">Minimal</div>
+                    <div class="template-desc">Clean & Simple</div>
+                </div>
+
+                <div class="template-card" data-template="portfolio" onclick="selectTemplate('portfolio', this)">
+                    <div class="template-preview">🎨</div>
+                    <div class="template-name">Portfolio</div>
+                    <div class="template-desc">Professional</div>
+                </div>
+
+                <div class="template-card" data-template="creator" onclick="selectTemplate('creator', this)">
+                    <div class="template-preview">✨</div>
+                    <div class="template-name">Creator</div>
+                    <div class="template-desc">Vibrant & Bold</div>
+                </div>
+
+                <div class="template-card" data-template="business" onclick="selectTemplate('business', this)">
+                    <div class="template-preview">💼</div>
+                    <div class="template-name">Business</div>
+                    <div class="template-desc">Corporate</div>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" onclick="nextStep()">
+                Continue to Profile Setup
+            </button>
+        </div>
+
+        <!-- Step 2: Profile Details -->
+        <div class="step" id="step2">
+            <div class="step-title">
+                <span class="step-number">2</span>
+                Your Profile
+            </div>
+
+            <form id="profileForm">
+                <!-- Profile Picture Upload -->
+                <div class="profile-picture-section">
+                    <label class="profile-picture-label">Profile Picture</label>
+                    <div class="profile-picture-upload" id="profilePictureUpload" onclick="document.getElementById('profilePictureInput').click()">
+                        <div class="profile-picture-placeholder" id="picturePlaceholder">
+                            <i class="fas fa-camera"></i>
+                            <div class="profile-picture-placeholder-text">Click to upload</div>
+                        </div>
+                        <img id="profilePicturePreview" style="display: none;">
+                    </div>
+                    <input type="file" id="profilePictureInput" class="profile-picture-input" accept="image/*">
+                    <div class="picture-hint">📸 JPG, PNG - up to 5MB (optional)</div>
+                </div>
+
+                <div class="form-group">
+                    <label for="name">Your Name *</label>
+                    <input type="text" id="name" placeholder="e.g. John Doe" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="bio">Bio / Tagline</label>
+                    <textarea id="bio" placeholder="Tell your story..."></textarea>
+                </div>
+
+                <!-- Advanced Layout & Style Options -->
+                <div class="section-title">
+                    <i class="fas fa-sliders-h"></i> Layout & Style
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <i class="fas fa-th" style="color: #667eea;"></i>
+                        <span>Layout Style</span>
+                    </label>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                        <div class="layout-option" data-layout="vertical" style="text-align: center; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                            <i class="fas fa-bars" style="font-size: 20px; margin-bottom: 6px; display: block; color: #667eea;"></i>
+                            <div style="font-weight: 600; font-size: 13px;">Vertical</div>
+                        </div>
+                        <div class="layout-option" data-layout="grid" style="text-align: center; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                            <i class="fas fa-th" style="font-size: 20px; margin-bottom: 6px; display: block; color: #667eea;"></i>
+                            <div style="font-weight: 600; font-size: 13px;">Grid</div>
+                        </div>
+                        <div class="layout-option" data-layout="card" style="text-align: center; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer; transition: all 0.3s;">
+                            <i class="fas fa-th-large" style="font-size: 20px; margin-bottom: 6px; display: block; color: #667eea;"></i>
+                            <div style="font-weight: 600; font-size: 13px;">Card</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <i class="fas fa-shapes" style="color: #667eea;"></i>
+                        <span>Button Shape</span>
+                    </label>
+                    <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                        <div class="button-shape-option" data-shape="rounded" style="text-align: center; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer;">
+                            <span style="display: inline-block; width: 40px; height: 24px; background: #667eea; border-radius: 8px; margin-bottom: 6px;"></span>
+                            <div style="font-weight: 600; font-size: 13px;">Rounded</div>
+                        </div>
+                        <div class="button-shape-option" data-shape="square" style="text-align: center; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer;">
+                            <span style="display: inline-block; width: 40px; height: 24px; background: #667eea; border-radius: 2px; margin-bottom: 6px;"></span>
+                            <div style="font-weight: 600; font-size: 13px;">Square</div>
+                        </div>
+                        <div class="button-shape-option" data-shape="pill" style="text-align: center; padding: 12px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer;">
+                            <span style="display: inline-block; width: 40px; height: 24px; background: #667eea; border-radius: 20px; margin-bottom: 6px;"></span>
+                            <div style="font-weight: 600; font-size: 13px;">Pill</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <i class="fas fa-font" style="color: #667eea;"></i>
+                        <span>Font Family</span>
+                    </label>
+                    <select id="fontFamily" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px; font-size: 14px;">
+                        <option value="sans-serif">Sans Serif (Default)</option>
+                        <option value="serif">Serif (Classic)</option>
+                        <option value="monospace">Monospace (Code)</option>
+                        <option value="cursive">Cursive (Fancy)</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <i class="fas fa-align-center" style="color: #667eea;"></i>
+                        <span>Text Color</span>
+                    </label>
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="color" id="textColor" value="#ffffff" style="width: 50px; height: 44px; border: 2px solid #e0e0e0; border-radius: 8px; cursor: pointer;">
+                        <input type="text" id="textColorText" placeholder="#ffffff" value="#ffffff" style="flex: 1; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <i class="fas fa-spacer" style="color: #667eea;"></i>
+                        <span>Spacing</span>
+                    </label>
+                    <input type="range" id="spacing" min="8" max="32" value="16" style="width: 100%; cursor: pointer;">
+                    <small style="color: #999; font-size: 12px; display: block; margin-top: 6px;">Adjust padding between links</small>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="enableHoverAnimation" checked style="width: 18px; height: 18px; cursor: pointer;">
+                        <i class="fas fa-mouse" style="color: #667eea;"></i>
+                        <span>Enable Hover Animations</span>
+                    </label>
+                </div>
+
+                <!-- Media & Embeds -->
+                <div class="section-title">
+                    <i class="fas fa-image"></i> Media & Embeds
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <i class="fas fa-film" style="color: #667eea;"></i>
+                        <span>Video/GIF URL <span style="color: #999; font-size: 12px; font-weight: 400;">(optional)</span></span>
+                    </label>
+                    <input type="url" id="videoUrl" placeholder="YouTube, Vimeo, or GIF URL" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    <small style="color: #999; font-size: 12px; margin-top: 6px; display: block;">Paste a YouTube, Vimeo, or GIF URL</small>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <i class="fas fa-music" style="color: #667eea;"></i>
+                        <span>Audio Embed <span style="color: #999; font-size: 12px; font-weight: 400;">(optional)</span></span>
+                    </label>
+                    <input type="url" id="audioUrl" placeholder="Spotify or SoundCloud track URL" style="width: 100%; padding: 10px; border: 2px solid #e0e0e0; border-radius: 8px;">
+                    <small style="color: #999; font-size: 12px; margin-top: 6px; display: block;">Spotify or SoundCloud embed link</small>
+                </div>
+
+                <!-- Advanced Options -->
+                <div class="section-title">
+                    <i class="fas fa-magic"></i> Advanced Options
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="showQRCode" style="width: 18px; height: 18px; cursor: pointer;">
+                        <i class="fas fa-qrcode" style="color: #667eea;"></i>
+                        <span>Show QR Code</span>
+                    </label>
+                    <small style="color: #999; font-size: 12px; margin-top: 6px; display: block;">Display QR code for easy sharing</small>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="showAnalytics" style="width: 18px; height: 18px; cursor: pointer;">
+                        <i class="fas fa-chart-bar" style="color: #667eea;"></i>
+                        <span>Display Analytics Badge</span>
+                    </label>
+                    <small style="color: #999; font-size: 12px; margin-top: 6px; display: block;">Show profile views and link clicks</small>
+                </div>
+
+                <div class="form-group">
+                    <label style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                        <i class="fas fa-tag" style="color: #667eea;"></i>
+                        <span>Optional Sections</span>
+                    </label>
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="showProjects" style="width: 18px; height: 18px; cursor: pointer;">
+                            <span style="font-size: 14px;">Projects Section</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="showDonate" style="width: 18px; height: 18px; cursor: pointer;">
+                            <span style="font-size: 14px;">Donation Links</span>
+                        </label>
+                        <label style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="showSocialBadges" style="width: 18px; height: 18px; cursor: pointer;">
+                            <span style="font-size: 14px;">Social Media Badges</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="section-title">
+                <div class="form-group">
+                    <label for="slug" style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+                        <i class="fas fa-at" style="color: #667eea;"></i>
+                        <span>Custom Slug <span style="color: #999; font-size: 12px; font-weight: 400;">(optional)</span></span>
+                    </label>
+                    <input type="text" id="slug" placeholder="@yourname or yourname">
+                    <small style="color:#999; font-size:12px; margin-top: 6px; display: block;">Choose a short slug (letters, numbers, -, _). Example: <code style="background: #f0f0f0; padding: 2px 6px; border-radius: 4px;">@ram</code></small>
+                </div>
+
+                <div class="links-container" id="linksContainer"></div>
+
+                <div class="add-link-form">
+                    <input type="text" id="linkTitle" placeholder="Link title (e.g. My Portfolio)">
+                    <select id="linkType">
+                        <option value="website">🌐 Website</option>
+                        <option value="email">📧 Email</option>
+                        <optgroup label="Social Media">
+                            <option value="instagram">Instagram</option>
+                            <option value="youtube">YouTube</option>
+                            <option value="tiktok">TikTok</option>
+                            <option value="snapchat">Snapchat</option>
+                            <option value="twitter">Twitter / X</option>
+                            <option value="facebook">Facebook</option>
+                            <option value="reddit">Reddit</option>
+                            <option value="mastodon">Mastodon</option>
+                        </optgroup>
+                        <optgroup label="Professional">
+                            <option value="linkedin">LinkedIn</option>
+                            <option value="github">GitHub</option>
+                            <option value="stackoverflow">StackOverflow</option>
+                            <option value="portfolio">Portfolio</option>
+                        </optgroup>
+                        <optgroup label="Creative">
+                            <option value="dribbble">Dribbble</option>
+                            <option value="behance">Behance</option>
+                            <option value="medium">Medium</option>
+                            <option value="codepen">CodePen</option>
+                        </optgroup>
+                        <optgroup label="Music & Entertainment">
+                            <option value="spotify">Spotify</option>
+                            <option value="soundcloud">SoundCloud</option>
+                            <option value="twitch">Twitch</option>
+                        </optgroup>
+                        <optgroup label="Messaging">
+                            <option value="whatsapp">WhatsApp</option>
+                            <option value="telegram">Telegram</option>
+                            <option value="discord">Discord</option>
+                            <option value="skype">Skype</option>
+                            <option value="viber">Viber</option>
+                            <option value="slack">Slack</option>
+                        </optgroup>
+                        <optgroup label="Creator & Support">
+                            <option value="patreon">Patreon</option>
+                            <option value="quora">Quora</option>
+                            <option value="kaggle">Kaggle</option>
+                            <option value="pinterest">Pinterest</option>
+                        </optgroup>
+                        <optgroup label="Commerce">
+                            <option value="shopify">Shopify</option>
+                            <option value="amazon">Amazon</option>
+                            <option value="ebay">eBay</option>
+                            <option value="etsy">Etsy</option>
+                        </optgroup>
+                        <optgroup label="Payment">
+                            <option value="paypal">PayPal</option>
+                            <option value="stripe">Stripe</option>
+                        </optgroup>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+
+                <div class="add-link-form-full">
+                    <input type="url" id="linkUrl" placeholder="URL (e.g. example.com or https://example.com)">
+                    <button type="button" class="btn btn-add" onclick="addLink()">
+                        <i class="fas fa-plus"></i> Add
+                    </button>
+                </div>
+
+                <button type="button" class="btn btn-secondary" onclick="prevStep()">
+                    ← Back to Templates
+                </button>
+
+                <button type="submit" class="btn btn-primary">
+                    <span class="loading" id="loading" style="display: none;"></span>
+                    Create & Share Profile
+                </button>
+            </form>
+        </div>
+
+        <!-- Result Box -->
+        <div class="result-box" id="resultBox">
+            <h3>✅ Profile Created!</h3>
+            <p style="color: #666; margin-bottom: 12px;">Share this link with anyone:</p>
+            <div class="result-url" id="shareUrl"></div>
+            <button class="copy-btn" onclick="copyToClipboard()">
+                <i class="fas fa-copy"></i> Copy Link
+            </button>
+            <div style="margin-top: 15px; font-size: 12px; color: #999;">
+                <p><strong>Edit Token:</strong> <code id="editToken" style="background: white; padding: 4px 8px; border-radius: 4px; display: inline-block; margin-top: 8px;"></code></p>
+                <p style="margin-top: 8px;">Save this token if you want to edit your profile later</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let links = [];
+        let selectedTemplate = 'minimal';
+        let selectedTheme = 'dark';
+        let bgColor = '#1a1a1a';
+        let buttonColor = '#667eea';
+        
+        // New customization options
+        let selectedLayout = 'vertical';
+        let selectedButtonShape = 'rounded';
+        let fontFamily = 'sans-serif';
+        let textColor = '#ffffff';
+        let spacing = 16;
+        let enableHoverAnimation = true;
+        let videoUrl = '';
+        let audioUrl = '';
+        let showQRCode = false;
+        let showAnalytics = false;
+        let enabledSections = {
+            projects: false,
+            donate: false,
+            socialBadges: false
+        };
+
+        function selectTemplate(template, element) {
+            selectedTemplate = template;
+            document.querySelectorAll('.template-card').forEach(card => card.classList.remove('selected'));
+            element.classList.add('selected');
+        }
+
+        function nextStep() {
+            document.getElementById('step1').classList.remove('active');
+            document.getElementById('step2').classList.add('active');
+        }
+
+        function prevStep() {
+            document.getElementById('step2').classList.remove('active');
+            document.getElementById('step1').classList.add('active');
+        }
+
+        // Layout options
+        document.querySelectorAll('.layout-option').forEach(option => {
+            option.addEventListener('click', function() {
+                selectedLayout = this.dataset.layout;
+                document.querySelectorAll('.layout-option').forEach(o => o.style.borderColor = '#e0e0e0');
+                this.style.borderColor = '#667eea';
+                this.style.background = '#f0f4ff';
+            });
+        });
+
+        // Button shape options
+        document.querySelectorAll('.button-shape-option').forEach(option => {
+            option.addEventListener('click', function() {
+                selectedButtonShape = this.dataset.shape;
+                document.querySelectorAll('.button-shape-option').forEach(o => o.style.borderColor = '#e0e0e0');
+                this.style.borderColor = '#667eea';
+                this.style.background = '#f0f4ff';
+            });
+        });
+
+        // Font family selector
+        document.getElementById('fontFamily').addEventListener('change', function() {
+            fontFamily = this.value;
+        });
+
+        // Text color picker
+        document.getElementById('textColor').addEventListener('change', function() {
+            textColor = this.value;
+            document.getElementById('textColorText').value = textColor;
+        });
+
+        document.getElementById('textColorText').addEventListener('change', function() {
+            textColor = this.value;
+            document.getElementById('textColor').value = textColor;
+        });
+
+        // Spacing slider
+        document.getElementById('spacing').addEventListener('input', function() {
+            spacing = parseInt(this.value);
+        });
+
+        // Hover animation checkbox
+        document.getElementById('enableHoverAnimation').addEventListener('change', function() {
+            enableHoverAnimation = this.checked;
+        });
+
+        // Media embeds
+        document.getElementById('videoUrl').addEventListener('change', function() {
+            videoUrl = this.value.trim();
+        });
+
+        document.getElementById('audioUrl').addEventListener('change', function() {
+            audioUrl = this.value.trim();
+        });
+
+        // Advanced options
+        document.getElementById('showQRCode').addEventListener('change', function() {
+            showQRCode = this.checked;
+        });
+
+        document.getElementById('showAnalytics').addEventListener('change', function() {
+            showAnalytics = this.checked;
+        });
+
+        // Optional sections
+        document.getElementById('showProjects').addEventListener('change', function() {
+            enabledSections.projects = this.checked;
+        });
+
+        document.getElementById('showDonate').addEventListener('change', function() {
+            enabledSections.donate = this.checked;
+        });
+
+        document.getElementById('showSocialBadges').addEventListener('change', function() {
+            enabledSections.socialBadges = this.checked;
+        });
+
+        let profilePictureBase64 = null;
+
+        document.getElementById('profilePictureInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            // Validate file size (5MB)
+            if (file.size > 5 * 1024 * 1024) {
+                showAlert('Image must be less than 5MB', 'error');
+                return;
+            }
+
+            // Validate file type
+            if (!file.type.startsWith('image/')) {
+                showAlert('Please select an image file', 'error');
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                profilePictureBase64 = event.target.result;
+                
+                // Show preview
+                const preview = document.getElementById('profilePicturePreview');
+                const placeholder = document.getElementById('picturePlaceholder');
+                
+                preview.src = profilePictureBase64;
+                preview.style.display = 'block';
+                placeholder.style.display = 'none';
+            };
+            reader.readAsDataURL(file);
+        });
+
+        const iconMap = {
+            'website': 'fa-globe',
+            'instagram': 'fa-instagram',
+            'youtube': 'fa-youtube',
+            'github': 'fa-github',
+            'twitter': 'fa-twitter',
+            'linkedin': 'fa-linkedin',
+            'facebook': 'fa-facebook',
+            'tiktok': 'fa-tiktok',
+            'email': 'fa-envelope',
+            'other': 'fa-link'
+        };
+
+        function getIconClass(type) {
+            return iconMap[type] || 'fa-link';
+        }
+
+        function detectPlatformFromUrl(url) {
+            const u = url.toLowerCase();
+            if (u.includes('instagram.com')) return 'instagram';
+            if (u.includes('youtube.com') || u.includes('youtu.be')) return 'youtube';
+            if (u.includes('github.com')) return 'github';
+            if (u.includes('twitter.com') || u.includes('x.com')) return 'twitter';
+            if (u.includes('linkedin.com')) return 'linkedin';
+            if (u.includes('facebook.com')) return 'facebook';
+            if (u.includes('tiktok.com')) return 'tiktok';
+            if (u.includes('spotify.com')) return 'spotify';
+            if (u.includes('twitch.tv')) return 'twitch';
+            if (u.includes('whatsapp.com') || u.includes('wa.me')) return 'whatsapp';
+            return null;
+        }
+
+        // Auto-select platform as user types/pastes a URL
+        document.getElementById('linkUrl').addEventListener('input', function() {
+            const v = this.value.trim();
+            const p = detectPlatformFromUrl(v);
+            if (p) document.getElementById('linkType').value = p;
+        });
+
+        function addLink() {
+            const title = document.getElementById('linkTitle').value.trim();
+            const url = document.getElementById('linkUrl').value.trim();
+            const type = document.getElementById('linkType').value;
+
+            if (!title || !url) {
+                showAlert('Please enter both title and URL', 'error');
+                return;
+            }
+
+            let detectedType = type;
+            const auto = detectPlatformFromUrl(url);
+            if (auto && (!detectedType || detectedType === 'other')) detectedType = auto;
+            if (url.startsWith('mailto:')) detectedType = 'email';
+
+            const fullUrl = url.startsWith('http') ? url : `https://${url}`;
+
+            links.push({
+                id: Date.now().toString(),
+                title,
+                url: fullUrl,
+                type: detectedType
+            });
+
+            renderLinks();
+            document.getElementById('linkTitle').value = '';
+            document.getElementById('linkUrl').value = '';
+        }
+
+        function deleteLink(id) {
+            links = links.filter(link => link.id !== id);
+            renderLinks();
+        }
+
+        function renderLinks() {
+            const container = document.getElementById('linksContainer');
+            if (links.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #999; padding: 20px;">No links yet. Add one above!</p>';
+                return;
+            }
+
+            container.innerHTML = links.map(link => `
+                <div class="link-item">
+                    <i class="fas ${getIconClass(link.type)} link-item-icon"></i>
+                    <div class="link-item-content">
+                        <div class="link-item-title">${link.title}</div>
+                        <div class="link-item-url">${link.url}</div>
+                    </div>
+                    <button type="button" class="link-item-delete" onclick="deleteLink('${link.id}')">Delete</button>
+                </div>
+            `).join('');
+        }
+
+        function showAlert(message, type) {
+            const alertEl = document.getElementById('alert');
+            alertEl.textContent = message;
+            alertEl.className = `alert show alert-${type}`;
+            setTimeout(() => alertEl.classList.remove('show'), 3000);
+        }
+
+        async function copyToClipboard() {
+            const url = document.getElementById('shareUrl').textContent;
+            try {
+                await navigator.clipboard.writeText(url);
+                showAlert('Link copied to clipboard!', 'success');
+            } catch (err) {
+                showAlert('Failed to copy', 'error');
+            }
+        }
+
+        document.getElementById('profileForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const name = document.getElementById('name').value.trim();
+            const bio = document.getElementById('bio').value.trim();
+
+            if (!name) {
+                showAlert('Please enter your name', 'error');
+                return;
+            }
+
+            if (links.length === 0) {
+                showAlert('Please add at least one link', 'error');
+                return;
+            }
+
+            const loadingEl = document.getElementById('loading');
+            loadingEl.style.display = 'inline-block';
+
+            try {
+                const response = await fetch('/api/create', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        name,
+                        bio,
+                        links,
+                        photo: profilePictureBase64,
+                        theme: 'dark',
+                        bgColor: '#1a1a1a',
+                        buttonColor: '#667eea',
+                        template: selectedTemplate,
+                        slug: (document.getElementById('slug').value || '').replace(/^@/, '').trim(),
+                        customization: {
+                            layout: selectedLayout,
+                            buttonShape: selectedButtonShape,
+                            fontFamily,
+                            textColor,
+                            spacing,
+                            enableHoverAnimation,
+                            videoUrl,
+                            audioUrl,
+                            showQRCode,
+                            showAnalytics,
+                            enabledSections
+                        }
+                    })
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    const fullUrl = `${window.location.origin}${result.url}`;
+                    document.getElementById('shareUrl').textContent = fullUrl;
+                    document.getElementById('editToken').textContent = result.editToken;
+                    document.getElementById('resultBox').classList.add('show');
+                    document.getElementById('profileForm').style.display = 'none';
+                    document.getElementById('step2').style.display = 'none';
+                    showAlert('Profile created successfully!', 'success');
+                } else {
+                    showAlert('Error: ' + result.error, 'error');
+                }
+            } catch (err) {
+                showAlert('Failed to create profile', 'error');
+                console.error(err);
+            } finally {
+                loadingEl.style.display = 'none';
+            }
+        });
+
+        renderLinks();
+    </script>
+</body>
+</html>
